@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'sasdev-nuxt',
+    title: 'flowih-MVC',
     htmlAttrs: {
       lang: 'en'
     },
@@ -37,7 +37,7 @@ export default {
   axios: {
     retry: { retries: 3 },
     credentials: true,
-    baseURL: 'https://sys-dev.searchandstay.com/api', // Used as fallback if no runtime config is provided
+    baseURL: process.env.BASE_URL, // Used as fallback if no runtime config is provided
     headers: {
       common: {
         'Accept': 'application/json, text/plain, */*'

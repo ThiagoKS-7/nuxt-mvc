@@ -1,10 +1,10 @@
 <template>
-    <div class="login_wrapper">
+    <div class="register_wrapper">
         <div class="absolute top-5 right-0">
             <ThemeSwitch/>
         </div>
-        <h1 class="text-[3em] mb-[0.3em]">Login</h1>
-        <div  @submit="loginUser()">
+        <h1 class="text-[5em] mb-[0.3em]">Register</h1>
+        <div  @submit="registerUser()">
             <div class="form_input">
                 <svg :fill="$colorMode.value === 'light' ? 'black' : 'white'"  width="40" height="40" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 28q0 0.832 0.576 1.44t1.44 0.576h20q0.8 0 1.408-0.576t0.576-1.44q0-1.44-0.672-2.912t-1.76-2.624-2.496-2.144-2.88-1.504q1.76-1.088 2.784-2.912t1.024-3.904v-1.984q0-3.328-2.336-5.664t-5.664-2.336-5.664 2.336-2.336 5.664v1.984q0 2.112 1.024 3.904t2.784 2.912q-1.504 0.544-2.88 1.504t-2.496 2.144-1.76 2.624-0.672 2.912z"></path>
@@ -19,7 +19,6 @@
                 </svg>
                 <input :disabled="loading" type="email" v-model="form.email"  required class="ml-3 rounded-[0.5em] w-[90%] text-black h-[34px]" placeholder="   Enter your email">
             </div>
-
             <div class="form_input">
                 <svg xmlns="http://www.w3.org/2000/svg"  
                 height="40" 
@@ -29,12 +28,16 @@
                 </svg>
                 <input :disabled="loading" type="password" v-model="form.password" required class="ml-3 rounded-[0.5em] w-[90%] text-black h-[34px]" placeholder="  Enter your password">
             </div>
-            <span>
-                Não possui conta? <a href="/register" class="text-sky-600">Crie uma aqui.</a>
-            </span>
+            <div class="form_input">
+                <span class="flex items-center">SuperUser: </span>
+                <label class="switch">
+                    <input type="checkbox" :disabled="loading" v-model="form.superuser"> 
+                    <span class="slider round"></span>
+                </label>
+            </div>
             <div class="flex justify-end mt-[3em]">
-                <button :disabled="loading" class="submit-button" @click="loginUser" >
-                    Login
+                <button :disabled="loading" class="submit-button" @click="registerUser" >
+                    register
                 </button>
             </div>
         </div>
@@ -43,31 +46,34 @@
 
 <script>
 export default {
-    name: 'LoginComponent',
+    name: 'registerComponent',
     data() {
         return {
             form: {
-                username: "",
+                username:"",
                 email: "",
+                superuser: false,
                 password: "",
             },
             loading: false
         }
     },
     methods: {
-        async loginUser() {
+        async registerUser() {
             try {
                 this.loading = true;
                 const body = {
-                    login: {
-                        username: this.form.username,
-                        email: this.form.email,
-                        password: this.form.password
-                    }
+                    username: this.form.username,
+                    is_superuser: this.form.superuser,
+                    email: this.form.email,
+                    password: this.form.password
                 }
-                const {data} = await this.$axios.$post("/token",body)
-                const token =  data.access_token
-                window.localStorage.setItem("token",token)
+                const token = window.localStorage.getItem("token");
+                if (token) {
+                    this.$axios.setToken(token, 'Bearer');
+                }
+                await this.$axios.$post("/users/new",body)
+                alert("User created successfully!")
                 setTimeout(()=> this.$router.push("/"), 500)
 
             } catch (e) {

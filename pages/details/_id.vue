@@ -7,21 +7,17 @@
                 <div v-if="!showForm" class="flex flex-col ml-[3em]">
                     <h1 class="text-3xl">Name: {{ details?.name ||"-" }}</h1>
                     <h3 class="text-xl">#{{ details?.id  ||"-"}}</h3>
-                    <h3 class="text-xl">Status: {{ details?.active == "0" ? "inactive" : "active"}}</h3>
-                    <h3 class="text-xl">Order: {{ details?.order}}</h3>
+                    <h3 class="text-xl">Desc: {{ details?.description}}</h3>
                 </div>
                 <div v-if="showForm" class="flex flex-col ml-[3em]">
                     <form class="flex flex-col items-center" @submit="updateRule()">
                         <div class="form_input">
                             <span class="flex items-center">Name: </span>
-                            <input :disabled="loading" type="text" v-model="form.name" required class="ml-3 rounded-[0.5em] w-[90%] text-black h-[34px]" placeholder="   Enter rule's name">
+                            <input :disabled="loading" type="text" v-model="form.name" required class="ml-3 rounded-[0.5em] w-[90%] text-black h-[34px]" placeholder="   Enter card's name">
                         </div>
                         <div class="form_input">
-                            <span class="flex items-center">Status: </span>
-                            <label class="switch">
-                                <input type="checkbox" :disabled="loading" v-model="form.active"> 
-                                <span class="slider round"></span>
-                            </label>
+                            <span class="flex items-center">Description: </span>
+                            <input :disabled="loading" type="text" v-model="form.description" required class="ml-3 rounded-[0.5em] w-[90%] text-black h-[34px]" placeholder="   Enter a small description">
                         </div>
                         <button type="submit" class="self-center submit-button">
                             Submit
@@ -58,7 +54,7 @@ export default {
             loading: false,
             form: {
                 name: "",
-                active: "",
+                description: "",
             },
             showForm: false,
         }
@@ -70,8 +66,7 @@ export default {
         async getUserDetails() {
             try {
                 const id = this.$route.params ? this.$route.params.id : "-"
-                const {data} = await this.$axios.$get(`/admin/house_rules/${id}`)
-                this.details = data
+                this.details = await this.$axios.$get(`/news/${id}`)
             } catch (e) {
                 this.$router.push("/")
             }
@@ -80,19 +75,22 @@ export default {
             return `https://picsum.photos/200/?id=${this.$route.params.id.toString()}`
         },
         askForEdit() {
-            this.showForm = confirm("Are you sure you want to edit this rules's details?")
+            this.showForm = confirm("Are you sure you want to edit this card's details?")
         },
         async updateRule() {
             try {
                 this.loading = true
                 const body = {
-                    house_rules: {
-                        name: this.form.name,
-                        active: this.form.active ? 1 : 0,
-                    }
+                    name: this.form.name,
+                    description: this.form.description,
                 }
-                const id = this.$route.params ? this.$route.params.id : "-"
-                await this.$axios.$put(`/admin/house_rules/${id}`, body)
+                const token = window.localStorage.getItem("token")
+                if (token) {
+                    this.$axios.setToken(token, 'Bearer');
+                    const id = this.$route.params ? this.$route.params.id : "-"
+                    await this.$axios.$put(`/news/${id}`, body)
+                }
+
             } catch (e) {
                 console.error(e)
             } finally {
@@ -101,11 +99,15 @@ export default {
             }
         },
         async askForDelete() {
-            if (confirm("Are you sure you want to delete this rule?")) {
+            if (confirm("Are you sure you want to delete this newscard?")) {
                 try {
                     this.loading = true
-                    const id = this.$route.params ? this.$route.params.id : "-"
-                    await this.$axios.$delete(`/admin/house_rules/${id}`)
+                    const token = window.localStorage.getItem("token")
+                    if (token) {
+                        this.$axios.setToken(token, 'Bearer');
+                        const id = this.$route.params ? this.$route.params.id : "-"
+                        await this.$axios.$delete(`/news/${id}`)
+                    }
                     setTimeout(() => this.$router.push("/"), 1000)
                 } catch (e) {
                     console.error(e)

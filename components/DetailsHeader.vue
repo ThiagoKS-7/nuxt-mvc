@@ -7,7 +7,7 @@
             </path>
             </svg>
         </div>
-        <h1 class="header-title">User #{{ this.$route.params ? this.$route.params.id : "-"}}</h1>
+        <h1 class="header-title">News Card #{{ this.$route.params ? this.$route.params.id : "-"}}</h1>
         <div>
             <span class="logout-button" @click="logoutUser()">Logout</span>
             <ThemeSwitch/>

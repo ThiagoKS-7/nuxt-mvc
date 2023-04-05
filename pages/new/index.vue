@@ -10,18 +10,15 @@
             </path>
             </svg>
         </div>
-        <h1 class="text-[5em] mb-[1em]">New rule</h1>
+        <h1 class="text-[5em] mb-[1em]">New Card</h1>
         <div class="flex flex-col items-center">
             <div class="form_input">
                 <span class="flex items-center">Name: </span>
                 <input :disabled="loading" type="text" v-model="form.name" required class="ml-3 rounded-[0.5em] w-[90%] text-black h-[34px]" placeholder="   Enter rule's name">
             </div>
             <div class="form_input">
-                <span class="flex items-center">Status: </span>
-                <label class="switch">
-                    <input type="checkbox" :disabled="loading" v-model="form.active"> 
-                    <span class="slider round"></span>
-                </label>
+                <span class="flex items-center">Description: </span>
+                <input :disabled="loading" type="text" v-model="form.description" :max="255" required class="ml-3 rounded-[0.5em] w-[90%]  h-[34px] text-black" placeholder="   Enter a small description">
             </div>
             <button type="submit" class="self-center submit-button" @click="createRule()">
                 Submit
@@ -37,7 +34,7 @@ export default {
         return {
             form: {
                 name: "",
-                active: "",
+                description: "",
             },
             loading: false
         }
@@ -52,15 +49,15 @@ export default {
                 const body = {
                     house_rules: {
                         name: this.form.name,
-                        active: this.form.active ? 1 : 0,
+                        description: this.form.description,
                     }
                 }
                 const token = window.localStorage.getItem("token");
                 if (token) {
                     this.$axios.setToken(token, 'Bearer');
                     if (this.isValidForm()) {
-                        await this.$axios.$post("/admin/house_rules",body)
-                        alert("Rule created successfully!")
+                        await this.$axios.$post("/news/add",body)
+                        alert("News created successfully!")
                         this.$router.push("/")
                     } else {
                         alert("Error! Check all form params before submitting!")
