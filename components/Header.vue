@@ -1,6 +1,6 @@
 <template>
     <div class="header-skeleton header-color">
-        <h1 class="header-title">SearchAndStay Frontend Task</h1>
+        <h1 class="header-title">Flowih MVC App</h1>
         <div class="flex justify-around items-center">
             <div class="add-button" @click="registerRule()">
                 <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
