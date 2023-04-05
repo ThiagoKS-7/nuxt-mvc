@@ -1,5 +1,8 @@
 # FLowih-MVC-nuxt
 
+![image](https://user-images.githubusercontent.com/83460816/230086936-47801f3c-86c9-4e7b-bc65-6b82be553e18.png)
+
+
 ## Build Setup
 
 ```bash
